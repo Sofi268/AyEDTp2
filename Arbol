@@ -1,1 +1,45 @@
+class Nodo {
+public:
+    Post post;
+    Nodo* der, * izq;
+};
 
+class Arbol {
+private:
+    Nodo* raiz, * q;
+    void borrar(Nodo*& n, Post x);
+    void bor(Nodo*& d);
+
+public:
+    arbol() { raiz = NULL; };
+    ~arbol() {};
+    void Borrar(Post x) { borrar(raiz, x); }
+
+};
+void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
+{
+    if (n == NULL) cout << "\n El post NO esta\n\n";
+    else if (x > n->info) borrar(n->der, x);
+    else if (x < n->info) borrar(n->izq, x);
+    else {// lo encontre en el nodo n
+        q = n;
+        if (n->der == NULL) n = n->izq;// raiz<=raiz del subarbol izq
+        else if (q->izq == NULL) n = q->der;//raiz<=raiz del subarbol der
+        else bor(q->izq);//busca en el sub arbol izq
+        if(q.comentarios!= NULL){// borra los comentarios del Post
+            for(int i=0; i<comentarios.size();i++){
+                delete comentarios[i];
+            }
+        }
+        delete q;
+    }
+}
+void Arbol::bor(Nodo*& d)
+{
+    if (d->der != NULL) bor(d->der);//busca el elemento mas a la derecha
+    else {
+        q->post = d->post;
+        q = d;
+        d = d->izq;
+    }
+}
