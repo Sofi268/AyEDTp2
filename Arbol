@@ -26,9 +26,9 @@ void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
         if (n->der == NULL) n = n->izq;// raiz<=raiz del subarbol izq
         else if (q->izq == NULL) n = q->der;//raiz<=raiz del subarbol der
         else bor(q->izq);//busca en el sub arbol izq
-        if(q.comentarios!= NULL){// borra los comentarios del Post
-            for(int i=0; i<comentarios.size();i++){
-                delete comentarios[i];
+        if(q->comentarios != NULL){// borra los comentarios del Post
+            for(int i=0; i<(q->comentarios.size());i++){
+                delete q->comentarios[i];
             }
         }
         delete q;
