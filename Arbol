@@ -14,7 +14,11 @@ public:
     arbol() { raiz = NULL; };
     ~arbol() {};
     void Borrar(Post x) { borrar(raiz, x); }
-
+    void participacionUsuario(String usuario);
+    void busquedaComentarios(String usuario, ArrayList comentariosUsuario);
+    void ordenComentariosInsercion(ArrayList comentariosUsuario);
+    void imprimirComentariosUsuario(ArrayList comentariosUsuario);
+    bool fechaAnterior(Fecha i, Fecha x);
 };
 void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
 {
@@ -26,9 +30,9 @@ void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
         if (n->der == NULL) n = n->izq;// raiz<=raiz del subarbol izq
         else if (q->izq == NULL) n = q->der;//raiz<=raiz del subarbol der
         else bor(q->izq);//busca en el sub arbol izq
-        if(q->comentarios != NULL){// borra los comentarios del Post
-            for(int i=0; i<(q->comentarios.size());i++){
-                delete q->comentarios[i];
+        if(q->COMENTARIOS != NULL){// borra los comentarios del Post
+            for(int i=0; i<(q->COMENTARIOS.size());i++){
+                delete q->COMENTARIOS[i];
             }
         }
         delete q;
@@ -41,5 +45,58 @@ void Arbol::bor(Nodo*& d)
         q->post = d->post;
         q = d;
         d = d->izq;
+    }
+}
+void Arbol::participacionUsuario(String usuario){
+    ArrayList <Comment> comentariosUsuario = new ArrayList <Comment>;
+    busquedaComentarios(usuario, comentariosUsuario);
+    ordenComentarios(comentariosUsuario);
+    cout<<"Comentarios de "<< usuario <<":"<<endl;
+    imprimirComentariosUsuario(comentariosUsuario);
+}
+void Arbol::busquedaComentarios(String usuario, ArrayList& comentariosUsuario){
+
+}
+void Arbol::ordenComentariosInsercion(ArrayList& comentariosUsuario){
+    int i,j,k,cant;
+    Fecha di,aj;
+    cant = comentariosUsuario.size();
+    for(i=1; i<cant; i++){
+        j=i-1; 
+        di = comentariosUsuario[i]->FECHA; 
+        aj = comentariosUsuario[j]->FECHA;
+        while(!fechaAnterior(di,aj) && j>=0){
+            a[j+1]=a[j];         
+            j--;
+        }
+        a[j+1]=di;  
+    }
+}
+void Arbol::imprimirComentariosUsuario(ArrayList comentariosUsuario){
+    for(Comment x: comentariosUsuario){
+        cout<<"Fecha: "<<x->fecha<<"\n"<<"Post: "<<x->post<<"\n"<<"Comentario: "<<x->contenido<<endl;
+    }
+}
+bool Arbol::fechaAnterior(Fecha i, Fecha x){
+    if (i->anio < x->anio) {
+        return true;
+    } 
+    else{
+        if (i->anio > x->anio) {
+        return false;
+        } 
+        else {
+          if (i->mes < x->mes) {
+            return true;
+        } 
+            else {
+                if (i->mes > x->mes) {
+                    return false;
+                }
+                else {
+                    return fecha1.dia < fecha2.dia;
+                }
+            }
+        }
     }
 }
