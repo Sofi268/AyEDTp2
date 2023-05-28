@@ -59,9 +59,9 @@ void Arbol::busquedaComentarios(string usuario, Comment (&comentariosUsuario)[10
     int i=0;
         for(Comment x: p->COMENTARIOS){ //recorre el array de comentarios del post
             if(x->USUARIO.equals(usuario)){
-                comentariosUsuario[i];
+                comentariosUsuario[i] = x;
+                i++;
             }
-            i++;
         }
 }
 void Arbol::ordenComentariosInsercion(Comment (&comentariosUsuario)[100]){
