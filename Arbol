@@ -58,7 +58,7 @@ void Arbol::busquedaComentarios(String usuario, ArrayList& comentariosUsuario){
 
 }
 void Arbol::ordenComentariosInsercion(ArrayList& comentariosUsuario){
-    int i,j,k,cant;
+    int i,j,cant;
     Fecha di,aj;
     cant = comentariosUsuario.size();
     for(i=1; i<cant; i++){
