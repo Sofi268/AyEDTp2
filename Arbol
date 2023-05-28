@@ -9,6 +9,7 @@ private:
     Nodo* raiz, * q;
     void borrar(Nodo*& n, Post x);
     void bor(Nodo*& d);
+    void recorrerArbol(Nodo* nodo,string& usuario, Comment (&comentariosUsuario)[100], int& contador);
 
 public:
     Arbol() { raiz = NULL; };
@@ -19,6 +20,7 @@ public:
     void ordenComentariosInsercion(Comment (&comentariosUsuario)[100]);
     void imprimirComentariosUsuario(Comment (&comentariosUsuario)[100]);
     bool fechaAnterior(Fecha i, Fecha x);
+    void RecorrerArbol(string& usuario,Comment (&comentariosUsuario)[100], int& contador){recorrerArbol(raiz ,usuario, comentariosUsuario, contador);};
 };
 void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
 {
@@ -57,9 +59,10 @@ void Arbol::participacionUsuario(string usuario){
 void Arbol::busquedaComentarios(string usuario, Comment (&comentariosUsuario)[100]){
     Post p;
     int i=0;
+
         for(Comment x: p->COMENTARIOS){ //recorre el array de comentarios del post
             if(x->USUARIO.equals(usuario)){
-                comentariosUsuario[i] = x;
+                comentariosUsuario[i]= x;
                 i++;
             }
         }
@@ -106,4 +109,28 @@ bool Arbol::fechaAnterior(Fecha i, Fecha x){
             }
         }
     }
+}
+
+void Arbol::recorrerArbol(Nodo* nodo, const std::string& usuario, Comment (&comentariosUsuario)[100], int& contador) {
+    if (nodo != NULL) {
+        // Verificar si el post actual tiene comentarios del usuario requerido
+        
+        for (Comment x : p->COMENTARIOS) { //recorre los comentarios de cada post
+            if (x->USUARIO.equals(usuario)) {
+                comentariosUsuario[contador] = x;
+                contador++;
+            }
+        }
+
+        // Recorrer el subárbol izquierdo
+        recorrerArbol(nodo->izq, usuario, comentariosUsuario, contador);
+
+        // Recorrer el subárbol derecho
+        recorrerArbol(nodo->der, usuario, comentariosUsuario, contador);
+    }
+}
+
+void Arbol::busquedaComentarios(string& usuario, Comment (&comentariosUsuario)[100]) {
+    int contador = 0;
+    RecorrerArbol(usuario, comentariosUsuario, contador);
 }
