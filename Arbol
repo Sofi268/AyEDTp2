@@ -11,20 +11,20 @@ private:
     void bor(Nodo*& d);
 
 public:
-    arbol() { raiz = NULL; };
-    ~arbol() {};
+    Arbol() { raiz = NULL; };
+    ~Arbol() {};
     void Borrar(Post x) { borrar(raiz, x); }
-    void participacionUsuario(String usuario);
-    void busquedaComentarios(String usuario, ArrayList comentariosUsuario);
-    void ordenComentariosInsercion(ArrayList comentariosUsuario);
-    void imprimirComentariosUsuario(ArrayList comentariosUsuario);
+    void participacionUsuario(string usuario);
+    void busquedaComentarios(string usuario, Comment (&comentariosUsuario)[100]);
+    void ordenComentariosInsercion(Comment (&comentariosUsuario)[100]);
+    void imprimirComentariosUsuario(Comment (&comentariosUsuario)[100]);
     bool fechaAnterior(Fecha i, Fecha x);
 };
 void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
 {
     if (n == NULL) cout << "\n El post NO esta\n\n";
-    else if (x > n->info) borrar(n->der, x);
-    else if (x < n->info) borrar(n->izq, x);
+    else if (x > n->post) borrar(n->der, x);
+    else if (x < n->post) borrar(n->izq, x);
     else {// lo encontre en el nodo n
         q = n;
         if (n->der == NULL) n = n->izq;// raiz<=raiz del subarbol izq
@@ -47,32 +47,39 @@ void Arbol::bor(Nodo*& d)
         d = d->izq;
     }
 }
-void Arbol::participacionUsuario(String usuario){
-    ArrayList <Comment> comentariosUsuario = new ArrayList <Comment>;
+void Arbol::participacionUsuario(string usuario){
+    Comment comentariosUsuario[100];
     busquedaComentarios(usuario, comentariosUsuario);
-    ordenComentarios(comentariosUsuario);
+    ordenComentariosInsercion(comentariosUsuario);
     cout<<"Comentarios de "<< usuario <<":"<<endl;
     imprimirComentariosUsuario(comentariosUsuario);
 }
-void Arbol::busquedaComentarios(String usuario, ArrayList& comentariosUsuario){
-
+void Arbol::busquedaComentarios(string usuario, Comment (&comentariosUsuario)[100]){
+    Post p;
+    int i=0;
+        for(Comment x: p->COMENTARIOS){ //recorre el array de comentarios del post
+            if(x->USUARIO.equals(usuario)){
+                comentariosUsuario[i];
+            }
+            i++;
+        }
 }
-void Arbol::ordenComentariosInsercion(ArrayList& comentariosUsuario){
+void Arbol::ordenComentariosInsercion(Comment (&comentariosUsuario)[100]){
     int i,j,cant;
     Fecha di,aj;
-    cant = comentariosUsuario.size();
+    cant = 100;
     for(i=1; i<cant; i++){
         j=i-1; 
         di = comentariosUsuario[i]->FECHA; 
         aj = comentariosUsuario[j]->FECHA;
         while(!fechaAnterior(di,aj) && j>=0){
-            a[j+1]=a[j];         
+            comentariosUsuario[j+1]= comentariosUsuario[j];         
             j--;
         }
-        a[j+1]=di;  
+        comentariosUsuario[j+1]=di;  
     }
 }
-void Arbol::imprimirComentariosUsuario(ArrayList comentariosUsuario){
+void Arbol::imprimirComentariosUsuario(Comment (&comentariosUsuario)[100]){
     for(Comment x: comentariosUsuario){
         cout<<"Fecha: "<<x->fecha<<"\n"<<"Post: "<<x->post<<"\n"<<"Comentario: "<<x->contenido<<endl;
     }
