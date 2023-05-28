@@ -1,1 +1,82 @@
-
+class Post{
+    public:
+        //CONSTRUCTOR-DESTRUCTOR
+        Post(String, String, int, String);
+        ~Post();
+        
+        
+        //SETTERS
+        void set_NombreUsuario(string);
+        int set_FechaPost(int); //ver si va asi por el array
+        void set_TituloPost(string);
+        void set_Likes(int);
+        void set_ContenidoPost(string);
+        
+        //GETTERS
+        void get_NombreUsuario();
+        int get_FechaPost(); 
+        void get_TituloPost();
+        void get_Likes();
+        void get_ContenidoPost();
+        
+        
+        //FUNCIONES
+        void agg_Comment();
+        void incrementar_Like();
+        void decrementar_Like();
+        void imprimir_Post();
+        
+    private:
+        String USUARIO; 
+        int FECHA[2];
+        String TITULO;  //titulo del post
+        int VALORACION; //contador de likes
+        String CONTENIDO; 
+        String COMENTARIOS[1000]; 
+    };
+    
+    //CONSTRUCTOR-DESTRUCTOR    
+    Post::Post(String U, String T, int L, String C){
+       
+     USUARIO = U; TITULO = T; VALORACION = L; CONTENIDO = C;
+    }
+    Post::~Post(){cout<<"\nDestructor";}
+    
+    
+    //SETTERS
+    void Post::set_NombreUsuario(){USUARIO=usuario;}
+    void Post::set_TituloPost(){TITULO=titulo;}
+    void Post::set_Likes(){VALORACION=valoracion;}
+    void Post::set_ContenidoPost(){CONTENIDO=contenido;}
+    int Post::set_FechaPost(){
+        
+        //VER FECHA
+    }
+    
+    //GETTERS
+    string Post::get_NombreUsuario(){return USUARIO;}
+    string Post::get_TituloPost(){return TITULO;}
+    int Post::get_Likes(){return VALORACION;}
+    string Post::get_ContenidoPost(){return CONTENIDO;}
+    int Post::get_FechaPost(){return FECHA;}
+    
+    //FUNCIONES:
+    void Post::agg_Comment(){
+        for(int i; i<100; i++){
+            
+            COMENTARIOS[i] = 1; //crear objeto comentario
+        }
+    }
+    void Post::incrementar_Like(){
+        VALORACION++;
+    }
+    void Post::decrementar_Like(){
+        VALORACION--;
+    }    
+    void Post::imprimir_Post(){
+        
+        cout << "Usuario: " << USUARIO << endl;
+        cout << endl <<"       " << CONTENIDO ;
+        Cout << "                Likes:" << VALORACION <<endl;
+    }
+}
