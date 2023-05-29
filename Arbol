@@ -1,136 +1,127 @@
+
 class Nodo {
 public:
     Post post;
-    Nodo* der, * izq;
+    Nodo* der;
+    Nodo* izq;
 };
 
 class Arbol {
 private:
-    Nodo* raiz, * q;
-    void borrar(Nodo*& n, Post x);
-    void bor(Nodo*& d);
-    void recorrerArbol(Nodo* nodo,string& usuario, Comment (&comentariosUsuario)[100], int& contador);
+    Nodo* raiz;
+    void borrar(Nodo*& n, const string& titulo);
+    void bor(Nodo*& d, Nodo*& q); // Agregado: Parámetro q
+    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q); // Agregado: Parámetro q
 
 public:
-    Arbol() { raiz = NULL; };
-    ~Arbol() {};
-    void Borrar(Post x) { borrar(raiz, x); }
-    void participacionUsuario(string usuario);
-    void busquedaComentarios(string usuario, Comment (&comentariosUsuario)[100]);
-    void ordenComentariosInsercion(Comment (&comentariosUsuario)[100]);
-    void imprimirComentariosUsuario(Comment (&comentariosUsuario)[100]);
-    bool fechaAnterior(Fecha i, Fecha x);
-    void RecorrerArbol(string& usuario,Comment (&comentariosUsuario)[100], int& contador){recorrerArbol(raiz ,usuario, comentariosUsuario, contador);};
+    Arbol() { raiz = nullptr; }
+    ~Arbol() {}
+    void Borrar(const Post& p) { borrar(raiz, p.TITULO); }
+    void participacionUsuario(const string& usuario);
+    void busquedaComentarios(const string& usuario, vector<Comment>& comentariosUsuario);
+    void ordenComentariosInsercion(vector<Comment>& comentariosUsuario);
+    void imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario);
+    bool fechaAnterior(const Fecha& i, const Fecha& x);
 };
-void Arbol::borrar(Nodo*& n, Post x)//borra el nodo que tiene el Post x
-{
-    if (n == NULL) cout << "\n El post NO esta\n\n";
-    else if (x > n->post) borrar(n->der, x);
-    else if (x < n->post) borrar(n->izq, x);
-    else {// lo encontre en el nodo n
+
+void Arbol::borrar(Nodo*& n, const string& titulo) {
+    if (n == nullptr) {
+        cout << "\nEl post NO está\n\n";
+    } else if (titulo < n->post.TITULO) {
+        borrar(n->izq, titulo);
+    } else if (titulo > n->post.TITULO) {
+        borrar(n->der, titulo);
+    } else {
+        Nodo* q;
         q = n;
-        if (n->der == NULL) n = n->izq;// raiz<=raiz del subarbol izq
-        else if (q->izq == NULL) n = q->der;//raiz<=raiz del subarbol der
-        else bor(q->izq);//busca en el sub arbol izq
-        if(q->COMENTARIOS != NULL){// borra los comentarios del Post
-            for(int i=0; i<(q->COMENTARIOS.size());i++){
-                delete q->COMENTARIOS[i];
-            }
+        if (n->der == nullptr) {
+            n = n->izq;
+        } else if (q->izq == nullptr) {
+            n = q->der;
+        } else {
+            bor(q->izq, q); // Agregado: Pasar q como parámetro
         }
         delete q;
     }
 }
-void Arbol::bor(Nodo*& d)
-{
-    if (d->der != NULL) bor(d->der);//busca el elemento mas a la derecha
-    else {
+
+void Arbol::bor(Nodo*& d, Nodo*& q) { // Agregado: Parámetro q
+    if (d->der != nullptr) {
+        bor(d->der, q); // Agregado: Pasar q como parámetro
+    } else {
         q->post = d->post;
         q = d;
         d = d->izq;
     }
 }
-void Arbol::participacionUsuario(string usuario){
-    Comment comentariosUsuario[100];
+
+void Arbol::participacionUsuario(const string& usuario) {
+    vector<Comment> comentariosUsuario;
+    Nodo* q = nullptr; // Agregado: Variable q
     busquedaComentarios(usuario, comentariosUsuario);
     ordenComentariosInsercion(comentariosUsuario);
-    cout<<"Comentarios de "<< usuario <<":"<<endl;
+    cout << "Comentarios de " << usuario << ":" << endl;
     imprimirComentariosUsuario(comentariosUsuario);
 }
-void Arbol::busquedaComentarios(string usuario, Comment (&comentariosUsuario)[100]){
-    Post p;
-    int i=0;
 
-        for(Comment x: p->COMENTARIOS){ //recorre el array de comentarios del post
-            if(x->USUARIO.equals(usuario)){
-                comentariosUsuario[i]= x;
-                i++;
-            }
-        }
+void Arbol::busquedaComentarios(const string& usuario, vector<Comment>& comentariosUsuario) {
+    Nodo* q = nullptr; // Agregado: Variable q
+    recorrerArbol(raiz, usuario, comentariosUsuario, q); // Agregado: Pasar q como parámetro
 }
-void Arbol::ordenComentariosInsercion(Comment (&comentariosUsuario)[100]){
-    int i,j,cant;
-    Fecha di,aj;
-    cant = 100;
-    for(i=1; i<cant; i++){
-        j=i-1; 
-        di = comentariosUsuario[i]->FECHA; 
-        aj = comentariosUsuario[j]->FECHA;
-        while(!fechaAnterior(di,aj) && j>=0){
-            comentariosUsuario[j+1]= comentariosUsuario[j];         
+
+void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
+    int cant = comentariosUsuario.size();
+    for (int i = 1; i < cant; i++) {
+        int j = i - 1;
+        Fecha di = comentariosUsuario[i].fecha;
+        Fecha aj = comentariosUsuario[j].fecha;
+        while (j >= 0 && !fechaAnterior(di, aj)) {
+            comentariosUsuario[j + 1] = comentariosUsuario[j];
             j--;
-        }
-        comentariosUsuario[j+1]=di;  
-    }
-}
-void Arbol::imprimirComentariosUsuario(Comment (&comentariosUsuario)[100]){
-    for(Comment x: comentariosUsuario){
-        cout<<"Fecha: "<<x->fecha<<"\n"<<"Post: "<<x->post<<"\n"<<"Comentario: "<<x->contenido<<endl;
-    }
-}
-bool Arbol::fechaAnterior(Fecha i, Fecha x){
-    if (i->anio < x->anio) {
-        return true;
-    } 
-    else{
-        if (i->anio > x->anio) {
-        return false;
-        } 
-        else {
-          if (i->mes < x->mes) {
-            return true;
-        } 
-            else {
-                if (i->mes > x->mes) {
-                    return false;
-                }
-                else {
-                    return fecha1.dia < fecha2.dia;
-                }
+            if (j >= 0) {
+                aj = comentariosUsuario[j].fecha;
             }
+        }
+        comentariosUsuario[j + 1] = comentariosUsuario[i]; // Corregido: Asignar comentariosUsuario[i]
+    }
+}
+
+void Arbol::imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario) {
+    for (const Comment& x : comentariosUsuario) {
+        cout << "Fecha: " << x.fecha.dia << "/" << x.fecha.mes << "/" << x.fecha.anio << "\n"
+             << "Comentario: " << x.contenido << endl;
+    }
+}
+
+bool Arbol::fechaAnterior(const Fecha& i, const Fecha& x) {
+    if (i.anio < x.anio) {
+        return true;
+    } else if (i.anio > x.anio) {
+        return false;
+    } else {
+        if (i.mes < x.mes) {
+            return true;
+        } else if (i.mes > x.mes) {
+            return false;
+        } else {
+            return i.dia < x.dia;
         }
     }
 }
 
-void Arbol::recorrerArbol(Nodo* nodo, const std::string& usuario, Comment (&comentariosUsuario)[100], int& contador) {
-    if (nodo != NULL) {
+void Arbol::recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q) { // Agregado: Parámetro q
+    if (nodo != nullptr) {
         // Verificar si el post actual tiene comentarios del usuario requerido
-        
-        for (Comment x : p->COMENTARIOS) { //recorre los comentarios de cada post
-            if (x->USUARIO.equals(usuario)) {
-                comentariosUsuario[contador] = x;
-                contador++;
+        for (const Comment& x : nodo->post.comentarios) {
+            if (x.USUARIO == usuario) {
+                comentariosUsuario.push_back(x);
             }
         }
 
         // Recorrer el subárbol izquierdo
-        recorrerArbol(nodo->izq, usuario, comentariosUsuario, contador);
+        recorrerArbol(nodo->izq, usuario, comentariosUsuario, q); // Agregado: Pasar q como parámetro
 
         // Recorrer el subárbol derecho
-        recorrerArbol(nodo->der, usuario, comentariosUsuario, contador);
+        recorrerArbol(nodo->der, usuario, comentariosUsuario, q); // Agregado: Pasar q como parámetro
     }
-}
-
-void Arbol::busquedaComentarios(string& usuario, Comment (&comentariosUsuario)[100]) {
-    int contador = 0;
-    RecorrerArbol(usuario, comentariosUsuario, contador);
 }
