@@ -1,4 +1,3 @@
-
 class Nodo {
 public:
     Post post;
@@ -10,8 +9,8 @@ class Arbol {
 private:
     Nodo* raiz;
     void borrar(Nodo*& n, const string& titulo);
-    void bor(Nodo*& d, Nodo*& q); // Agregado: Parámetro q
-    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q); // Agregado: Parámetro q
+    void bor(Nodo*& d, Nodo*& q); 
+    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q); 
 
 public:
     Arbol() { raiz = NULL; }
@@ -73,13 +72,13 @@ void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
     int cant = comentariosUsuario.size();
     for (int i = 1; i < cant; i++) {
         int j = i - 1;
-        Fecha di = comentariosUsuario[i].fecha;
-        Fecha aj = comentariosUsuario[j].fecha;
+        Fecha di = comentariosUsuario[i].FECHA;
+        Fecha aj = comentariosUsuario[j].FECHA;
         while (j >= 0 && !fechaAnterior(di, aj)) {
             comentariosUsuario[j + 1] = comentariosUsuario[j];
             j--;
             if (j >= 0) {
-                aj = comentariosUsuario[j].fecha;
+                aj = comentariosUsuario[j].FECHA;
             }
         }
         comentariosUsuario[j + 1] = comentariosUsuario[i]; 
@@ -88,8 +87,8 @@ void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
 
 void Arbol::imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario) {
     for (const Comment& x : comentariosUsuario) {
-        cout << "Fecha: " << x.fecha.dia << "/" << x.fecha.mes << "/" << x.fecha.anio << "\n"
-             << "Comentario: " << x.contenido << endl;
+        cout << "Fecha: " << x.FECHA.dia << "/" << x.FECHA.mes << "/" << x.FECHA.anio << "\n"
+             <<"Post: "<<x.TITULO<< "Comentario: " << x.CONTENIDO << endl;
     }
 }
 
@@ -112,7 +111,7 @@ bool Arbol::fechaAnterior(const Fecha& i, const Fecha& x) {
 void Arbol::recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q) { 
     if (nodo != NULL) {
         // Verificar si el post actual tiene comentarios del usuario requerido
-        for (const Comment& x : nodo->post.comentarios) {
+        for (const Comment& x : nodo->post.COMENTARIOS) {
             if (x.USUARIO == usuario) {
                 comentariosUsuario.push_back(x);
             }
