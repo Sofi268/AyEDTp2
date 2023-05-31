@@ -3,22 +3,25 @@ public:
     T tipoDato;
     Nodo* der, * izq;
 };
-
 class Arbol {
 private:
     Nodo* raiz; 
-    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario); 
-
+    void recorrerArbol(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario); 
+    void borrarPost(Nodo*& post,string titulo);
+    void borrar(Nodo*& p, T x);
+    void bor(Nodo*& d);
 public:
     Arbol() { raiz = NULL; }
     ~Arbol() {}
     void participacionUsuario(const string& usuario);
     vector<Comment> busquedaComentarios(const string& usuario);
-    void recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario);
+    void recorrerPost(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario);
     void RecorrerArbol(usuario, comentariosUsuario){recorrerArbol(raiz, usuario, comentariosUsuario);};
     void ordenComentariosInsercion(vector<Comment>& comentariosUsuario);
     void imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario);
     bool fechaAnterior(const Fecha& i, const Fecha& x);
+    void BorrarPost(Nodo*& post){borrarPost(raiz, post.TITULO);};
+    void Borrar(Nodo*& p){borrar(raiz, p);};
 };
 void Arbol::recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario) { 
     if (nodo != NULL) {
@@ -32,7 +35,7 @@ void Arbol::recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& com
         recorrerPost(nodo->der, usuario, comentariosUsuario); 
     }
 }
-void Arbol::recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario){
+void Arbol::recorrerArbol(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario){
 
     //Recorre los comentarios de cada post
     recorrerPost(nodo->izq, usuario, comentariosUsuario);
@@ -88,4 +91,52 @@ void Arbol::participacionUsuario(const string& usuario) {
     ordenComentariosInsercion(comentariosUsuario);
     cout << "Comentarios de " << usuario << ":" << endl;
     imprimirComentariosUsuario(comentariosUsuario);
+}
+
+void Arbol::borrarPostComentarios(Nodo*& comentario) { 
+    if (comentario != NULL) {
+        while(comentario->izq!=NULL){
+        // Recorrer el subárbol izquierdo
+        borrarPostComentarios(comentario->izq); 
+        }
+        delete comentario;
+        while(comentario->der!=NULL){
+        // Recorrer el subárbol derecho
+        borrarPostComentarios(comentario->der); 
+        }
+        delete nodo;
+    }
+}
+void Arbol::borrarPost(Nodo*& post, string titulo){
+    if(post.TITULO==titulo){
+    borrarPostComentarios(post->izq);
+    Borrar(post);
+    }
+    else{
+        borrarPost(post->izq, titulo);
+    }
+    
+}
+
+void Arbol::borrar(Nodo*& n) {
+    Nodo* q;
+    q = n;
+    if (n->der == NULL) {
+        n = n->izq;
+    } else if (q->izq == NULL) {
+        n = q->der;
+    } else {
+        bor(q->izq, q); 
+    }
+    delete q;
+}
+
+void Arbol::bor(Nodo*& d, Nodo*& q) { 
+    if (d->der != NULL) {
+        bor(d->der, q); 
+    } else {
+        q->post = d->post;
+        q = d;
+        d = d->izq;
+    }
 }
