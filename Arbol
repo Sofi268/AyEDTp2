@@ -3,29 +3,30 @@ public:
     T tipoDato;
     Nodo* der, * izq;
 };
+
 class Arbol {
 private:
     Nodo* raiz; 
     void recorrerArbol(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario); 
     void borrarPost(Nodo*& post,string titulo);
-    void borrar(Nodo*& p, T x);
-    void bor(Nodo*& d);
+    void borrar(Nodo*& nodo, Post post);
+    void bor(Nodo*& d,Nodo*& q);
 public:
     Arbol() { raiz = NULL; }
     ~Arbol() {}
     void participacionUsuario(const string& usuario);
-    vector<Comment> busquedaComentarios(const string& usuario);
+    vector<Comment> busquedaComentarios(const string& usuario, vector<Comment> comentariosUsuario);
     void recorrerPost(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario);
-    void RecorrerArbol(usuario, comentariosUsuario){recorrerArbol(raiz, usuario, comentariosUsuario);};
+    void RecorrerArbol(const string& usuario, const string& comentariosUsuario){recorrerArbol(raiz, usuario, comentariosUsuario);};
     void ordenComentariosInsercion(vector<Comment>& comentariosUsuario);
     void imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario);
     bool fechaAnterior(const Fecha& i, const Fecha& x);
     void BorrarPost(Nodo*& post){borrarPost(raiz, post.TITULO);};
-    void Borrar(Nodo*& p){borrar(raiz, p);};
+    void Borrar(Post post){borrar(raiz, post);};
 };
-void Arbol::recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario) { 
+void Arbol::recorrerPost(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario) { 
     if (nodo != NULL) {
-        if (nodo.USUARIO == usuario) {
+        if (nodo.UUSUARIO_COMMENT == usuario) {
             comentariosUsuario.push_back(x);
         }
         // Recorrer el subárbol izquierdo
@@ -36,15 +37,15 @@ void Arbol::recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& com
     }
 }
 void Arbol::recorrerArbol(Nodo*& nodo, const string& usuario, vector<Comment>& comentariosUsuario){
+    if (nodo != NULL) {
+        //Recorre los comentarios de cada post
+        recorrerPost(nodo->izq, usuario, comentariosUsuario);
 
-    //Recorre los comentarios de cada post
-    recorrerPost(nodo->izq, usuario, comentariosUsuario);
-
-    //Recorre los post
-    recorrerArbol(nodo->der, usuario, comentariosUsuario);
-    
+        //Recorre los post
+        recorrerArbol(nodo->der, usuario, comentariosUsuario);
+    }
 }
-vector<Comment> Arbol::busquedaComentarios(const string& usuario) {
+vector<Comment> Arbol::busquedaComentarios(const string& usuario, vector<Comment> comentariosUsuario) {
     RecorrerArbol(usuario, comentariosUsuario); 
     return comentariosUsuario;
 }
@@ -81,8 +82,8 @@ void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
 }
 void Arbol::imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario) {
     for (const Comment& x : comentariosUsuario) {
-        cout << "Fecha: " << x.FECHA.dia << "/" << x.FECHA.mes << "/" << x.FECHA.anio << "\n"
-             <<"Post: "<<x.TITULO<< "Comentario: " << x.CONTENIDO << endl;
+        cout << "Fecha: " << x.FECHA.dia << "\n" << x.FECHA.mes << "\n" << x.FECHA.anio << "\n"
+             <<"Post: "<<x.TITULO<< "\n"<< "Comentario: " << x.CONTENIDO << endl;
     }
 }
 void Arbol::participacionUsuario(const string& usuario) {
@@ -113,30 +114,30 @@ void Arbol::borrarPost(Nodo*& post, string titulo){
     Borrar(post);
     }
     else{
-        borrarPost(post->izq, titulo);
+        borrarPost(post->der, titulo);
     }
     
 }
-
-void Arbol::borrar(Nodo*& n) {
-    Nodo* q;
-    q = n;
-    if (n->der == NULL) {
-        n = n->izq;
-    } else if (q->izq == NULL) {
-        n = q->der;
-    } else {
-        bor(q->izq, q); 
-    }
-    delete q;
-}
-
 void Arbol::bor(Nodo*& d, Nodo*& q) { 
     if (d->der != NULL) {
         bor(d->der, q); 
     } else {
-        q->post = d->post;
+        q->USUARIO_Post = d->USUARIO_Post; 
+        q->CONTENIDO_Post = d->CONTENIDO_Post; 
+        q->VALORACION_Post = d->VALORACION_Post; 
         q = d;
         d = d->izq;
+    }
+}
+void Arbol::borrar(Nodo*& nodo, Post post){
+    if (nodo == NULL) cout << "\n El Post NO esta\n\n";
+    else if (post.TITULO != nodo->TITULO) borrar(nodo->der, post);
+    else {// lo encontre en el nodo p
+        Nodo* q;
+        q = nodo;
+        if (q->der == NULL) nodo = q->izq;// raiz<=raiz del subarbol izq
+        else if (q->izq == NULL) nodo = q->der;//raiz<=raiz del subarbol der
+        else bor(q->izq, q);//busca en el sub arbol izq
+        delete q;
     }
 }
