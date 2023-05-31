@@ -1,73 +1,65 @@
-class Nodo {
+template <class T> class Nodo {
 public:
-    Post post;
-    Nodo* der;
-    Nodo* izq;
+    T tipoDato;
+    Nodo* der, * izq;
 };
 
 class Arbol {
 private:
-    Nodo* raiz;
-    void borrar(Nodo*& n, const string& titulo);
-    void bor(Nodo*& d, Nodo*& q); 
-    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q); 
+    Nodo* raiz; 
+    void recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario); 
 
 public:
     Arbol() { raiz = NULL; }
     ~Arbol() {}
-    void Borrar(const Post& p) { borrar(raiz, p.TITULO); }
     void participacionUsuario(const string& usuario);
-    void busquedaComentarios(const string& usuario, vector<Comment>& comentariosUsuario);
+    vector<Comment> busquedaComentarios(const string& usuario);
+    void recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario);
+    void RecorrerArbol(usuario, comentariosUsuario){recorrerArbol(raiz, usuario, comentariosUsuario);};
     void ordenComentariosInsercion(vector<Comment>& comentariosUsuario);
     void imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario);
     bool fechaAnterior(const Fecha& i, const Fecha& x);
 };
-
-void Arbol::borrar(Nodo*& n, const string& titulo) {
-    if (n == NULL) {
-        cout << "\nEl post NO está\n\n";
-    } else if (titulo < n->post.TITULO) {
-        borrar(n->izq, titulo);
-    } else if (titulo > n->post.TITULO) {
-        borrar(n->der, titulo);
-    } else {
-        Nodo* q;
-        q = n;
-        if (n->der == NULL) {
-            n = n->izq;
-        } else if (q->izq == NULL) {
-            n = q->der;
-        } else {
-            bor(q->izq, q); 
+void Arbol::recorrerPost(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario) { 
+    if (nodo != NULL) {
+        if (nodo.USUARIO == usuario) {
+            comentariosUsuario.push_back(x);
         }
-        delete q;
+        // Recorrer el subárbol izquierdo
+        recorrerPost(nodo->izq, usuario, comentariosUsuario); 
+
+        // Recorrer el subárbol derecho
+        recorrerPost(nodo->der, usuario, comentariosUsuario); 
     }
 }
+void Arbol::recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario){
 
-void Arbol::bor(Nodo*& d, Nodo*& q) { 
-    if (d->der != NULL) {
-        bor(d->der, q); 
+    //Recorre los comentarios de cada post
+    recorrerPost(nodo->izq, usuario, comentariosUsuario);
+
+    //Recorre los post
+    recorrerArbol(nodo->der, usuario, comentariosUsuario);
+    
+}
+vector<Comment> Arbol::busquedaComentarios(const string& usuario) {
+    RecorrerArbol(usuario, comentariosUsuario); 
+    return comentariosUsuario;
+}
+bool Arbol::fechaAnterior(const Fecha& i, const Fecha& x) {
+    if (i.anio < x.anio) {
+        return true;
+    } else if (i.anio > x.anio) {
+        return false;
     } else {
-        q->post = d->post;
-        q = d;
-        d = d->izq;
+        if (i.mes < x.mes) {
+            return true;
+        } else if (i.mes > x.mes) {
+            return false;
+        } else {
+            return i.dia < x.dia;
+        }
     }
 }
-
-void Arbol::participacionUsuario(const string& usuario) {
-    vector<Comment> comentariosUsuario;
-    Nodo* q = NULL; 
-    busquedaComentarios(usuario, comentariosUsuario);
-    ordenComentariosInsercion(comentariosUsuario);
-    cout << "Comentarios de " << usuario << ":" << endl;
-    imprimirComentariosUsuario(comentariosUsuario);
-}
-
-void Arbol::busquedaComentarios(const string& usuario, vector<Comment>& comentariosUsuario) {
-    Nodo* q = NULL; 
-    recorrerArbol(raiz, usuario, comentariosUsuario, q); 
-}
-
 void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
     int cant = comentariosUsuario.size();
     for (int i = 1; i < cant; i++) {
@@ -84,43 +76,16 @@ void Arbol::ordenComentariosInsercion(vector<Comment>& comentariosUsuario) {
         comentariosUsuario[j + 1] = comentariosUsuario[i]; 
     }
 }
-
 void Arbol::imprimirComentariosUsuario(const vector<Comment>& comentariosUsuario) {
     for (const Comment& x : comentariosUsuario) {
         cout << "Fecha: " << x.FECHA.dia << "/" << x.FECHA.mes << "/" << x.FECHA.anio << "\n"
              <<"Post: "<<x.TITULO<< "Comentario: " << x.CONTENIDO << endl;
     }
 }
-
-bool Arbol::fechaAnterior(const Fecha& i, const Fecha& x) {
-    if (i.anio < x.anio) {
-        return true;
-    } else if (i.anio > x.anio) {
-        return false;
-    } else {
-        if (i.mes < x.mes) {
-            return true;
-        } else if (i.mes > x.mes) {
-            return false;
-        } else {
-            return i.dia < x.dia;
-        }
-    }
-}
-
-void Arbol::recorrerArbol(Nodo* nodo, const string& usuario, vector<Comment>& comentariosUsuario, Nodo*& q) { 
-    if (nodo != NULL) {
-        // Verificar si el post actual tiene comentarios del usuario requerido
-        for (const Comment& x : nodo->post.COMENTARIOS) {
-            if (x.USUARIO == usuario) {
-                comentariosUsuario.push_back(x);
-            }
-        }
-
-        // Recorrer el subárbol izquierdo
-        recorrerArbol(nodo->izq, usuario, comentariosUsuario, q); 
-
-        // Recorrer el subárbol derecho
-        recorrerArbol(nodo->der, usuario, comentariosUsuario, q); 
-    }
+void Arbol::participacionUsuario(const string& usuario) {
+    vector<Comment> comentariosUsuario = NULL;
+    comentariosUsuario = busquedaComentarios(usuario, comentariosUsuario);
+    ordenComentariosInsercion(comentariosUsuario);
+    cout << "Comentarios de " << usuario << ":" << endl;
+    imprimirComentariosUsuario(comentariosUsuario);
 }
